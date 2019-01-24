@@ -1,0 +1,119 @@
+<form name="$ctrl.form" ng-switch="$ctrl.type">
+    <div ng-switch-when="plaintext" class="question-group">
+        <md-input-container class="md-block">
+            <textarea name="text" ng-model="$ctrl.answers" required></textarea>
+            <div ng-messages="$ctrl.form.text.$error">
+                <div ng-message="required">必ず入力してください。</div>
+            </div>
+        </md-input-container>
+    </div>
+
+    <div ng-switch-when="form">
+        <div ng-repeat="item in $ctrl.items" class="question-group" ng-init="i = $index" id="item{{i}}" ng-class="{ invalid: !$ctrl.validate(i) && $ctrl.isInvalid }">
+            <p style="white-space: pre-line" >{{ item.label }}</p>
+
+            <div class="question-field-control" ng-switch="item.type" >
+                <md-radio-group layout="row" ng-switch-when="radio" ng-model="$ctrl.answers[i]" >
+                    <label ng-repeat="value in item.values">
+                        <md-radio-button
+                               name="{{ item.label }}"
+                               value="{{value}}"
+                               class="md-primary">
+                            {{ value }}
+                        </md-radio-button>
+                    </label>
+                </md-radio-group>
+
+                <md-radio-group layout="row" ng-switch-when="radio_other" ng-model="$ctrl.answers[i]" ng-change="$ctrl.onRadioGroupChange([$ctrl.answers[i],i, item.values])">
+                    <label ng-repeat="value in item.values">
+                        <md-radio-button ng-if="!$last"
+                               name="{{ item.label }}"
+                               value="{{value}}"
+                               class="md-primary">
+                            {{ value }}
+                        </md-radio-button>
+
+                        <div layout="row" class="radio_other">
+                            <md-radio-button ng-if="$last"
+                                name="{{ item.label }}"
+                                ng-init="$ctrl.radioOthers[i] = ''"
+                                ng-value="$ctrl.radioOthers[i]"
+                                class="md-primary">
+                                {{ value }}
+                            </md-radio-button>
+                            <input ng-if="$last"
+                                type="text"
+                                ng-focus="$ctrl.onRadioInputFocus($event)"
+                                index={{i}}
+                                ng-model="$ctrl.radioOthers[i]"
+                                ng-blur="$ctrl.onRadioInputBlur($event)"
+                                ng-change="$ctrl.onRadioInputChange([$ctrl.radioOthers[i], i, item.values[0]])"
+                                defval={{item.values[0]}}
+                                name={{value}}>
+                        </div>
+                    </label>
+                </md-radio-group>
+
+                <div ng-switch-when="checkbox">
+                    <label ng-repeat="value in item.values">
+                        <md-checkbox class="md-primary" aria-label="{{value}}"
+                               ng-model="$ctrl.answers[i][value]">
+                        {{ value }}
+                        </md-checkbox>
+                    </label>
+                </div>
+
+                <div ng-switch-when="checkbox_other">
+                    <label ng-repeat="value in item.values">
+                        <md-checkbox class="md-primary" ng-if="!$last" aria-label="{{value}}"
+                               ng-model="$ctrl.answers[i][value]">
+                            {{ value }}
+                        </md-checkbox>
+
+                        <md-checkbox class="md-primary" ng-if="$last" aria-label="{{value}}"
+                               ng-model="$ctrl.checkboxOthers[i]"
+                               index={{i}}
+                               ng-change="$ctrl.onCheckboxChange([i,value])">
+                            {{ value }}
+                        </md-checkbox>
+                        
+                        <input ng-if="$last"
+                               name={{value}}
+                               type="text"
+                               ng-focus="$ctrl.onCheckboxInputFocus($event)"
+                               ng-model="$ctrl.answers[i][value]"
+                               index={{i}}
+                               ng-blur="$ctrl.onCheckboxInputBlur($event)"
+                               ng-change="$ctrl.onCheckboxInputChange([$ctrl.answers[i][value], i])">
+                    </label>
+                </div>
+
+                <md-input-container ng-switch-when="text" class="md-block" >
+                    <ng-form name="textForm">
+                        <input type="text" name="item" ng-model="$ctrl.answers[i]" aria-label="item{{i}}" required>
+                        <md-tooltip ng-if="!$ctrl.isAnswered(i)" md-visible="$ctrl.showTips" md-direction="bottom">必ず入力してください。</md-tooltip>
+                        <div ng-messages="textForm.item.$error">
+                            <div ng-message="required">必ず入力してください。</div>
+                        </div>        
+                    </ng-form>
+                </md-input-container>
+
+                <div ng-switch-when="matrix">
+                    <table>
+                        <tr>
+                            <td></td>
+                            <th ng-repeat="x_label in item.matrix_axes[0]">{{ x_label }}</th>
+                        </tr>
+                        <tr ng-repeat="y_label in item.matrix_axes[1]" ng-init="y = $index">
+                            <th>{{ y_label }}</th>
+                            <!--suppress JSUnusedLocalSymbols -->
+                            <td ng-repeat="_ in item.matrix_axes[0]" ng-init="x = $index">
+                                <md-checkbox class="md-primary" ng-model="$ctrl.answers[i][x][y]" aria-label="{{x}}{{y}}"></md-checkbox>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="QuestionnaireCall">
+    <head>
+        <meta charset="UTF-8">
+        <title>LiveCall</title>
+
+        <meta name="viewport" content="width=device-width">
+
+        <!--suppress ES6ConvertVarToLetConst -->
+        <script src="build/questionnaire-page.js"></script>
+        <link rel="stylesheet" type="text/css" href="build/questionnaire-page.css">
+        <!-- <script>
+            (function () {
+                var baseHost = window.location.host.match(/((?:staging\.|testing\.)?livecall\..+)/) || [];
+                baseHost = baseHost[0] || window.location.host;
+
+                var script = document.createElement('script');
+                script.src = '//' + baseHost + '/build/questionnaire-page.js';
+                script.async = true;
+                document.head.appendChild(script);
+
+                var style = document.createElement('link');
+                style.rel = 'stylesheet';
+                style.href = '//' + baseHost + '/build/questionnaire-page.css';
+                document.head.appendChild(style);
+            })();
+        </script> -->
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    </head>
+    <body ng-controller="QuestionnaireCall as ctrl" >
+        <md-content class="questionnaire-page" layout="column" layout-align="center center">
+            <div>
+                <img src="assets/logo.livecall.dark.png" alt="LiveCall" style="width: 250px">
+            </div>
+            <questionnaire 
+                            class="side-margin question-info"
+                            questionnaire="ctrl.questionnaire"
+                            on-update="ctrl.onQuestionnaireAnswerUpdate(answers)"
+                            is-invalid="ctrl.isInvalid">
+            </questionnaire>
+            <md-button ng-click="ctrl.callOut()" class="md-primary md-raised">Make a Call</md-button>
+        </md-content>
+    </body>
+</html>
